@@ -217,41 +217,25 @@
 
 #### 1.3 API 연동
 
-**1. 전류 및 전압 데이터 조회**
-- API 엔드포인트: `/api/monitoring/power`
-- 요청 파라미터: `deviceID`, `startTime`, `endTime`
-- 응답 데이터 형식:
+**1. 전류 및 전압 TopN**
+- API 엔드포인트: `/monitoring/topN`
+- 백엔드 파일명: `MonitoringController.java`
 
-  ```typescript
-  interface PowerData {
-    timestamp: string;
-    current: number;
-    voltage: number;
-  }
-  ```
+**2. 통합장비정보**
+- API 엔드포인트: `/monitoring/list`
+- 백엔드 파일명: `MonitoringController.java`
 
-**2. 임계값 설정**
-- API 엔드포인트: `/api/settings/threshold`
-- 요청 데이터 형식:
+**3. 통계 및 차트**
+- API 엔드포인트: `/statistic/inflow`
+- 백엔드 파일명: `StatisticController.java`
 
-  ```typescript
-  interface ThresholdSettings {
-    deviceID?: string; // 개별 설정 시 사용
-    currentThreshold: number;
-    voltageThreshold: number;
-  }
-  ```
+**4. 임계값 설정**
+- API 엔드포인트: `/configuration/getAlarmInfo`, `/configuration/setAlarmInfo`
+- 백엔드 파일명: `ConfigurationController.java`
 
-**3. SMTP 이벤트 설정**
-- API 엔드포인트: `/api/settings/smtp-events`
-- 요청 데이터 형식:
-
-  ```typescript
-  interface SmtpEventSettings {
-    currentEnabled: boolean;
-    voltageEnabled: boolean;
-  }
-  ```
+**4. SMTP 이벤트 설정**
+- API 엔드포인트: `/configuration/getSmtpEventInfo`, `/configuration/setSmtpEventInfo`
+- 백엔드 파일명: `ConfigurationController.java`
 
 ---
 
@@ -311,17 +295,19 @@
 #### 2.3 API 연동
 
 **1. 사용자 대시보드 위젯 관리**
-- `getUserDashboardWidgets`: 사용자의 대시보드 위젯 설정 조회
-- `setUserDashboardWidgets`: 사용자의 대시보드 위젯 설정 저장
+- `/global/getUserDashboardWidgets`: 사용자의 대시보드 위젯 설정 조회
+- `/global/setUserDashboardWidgets`: 사용자의 대시보드 위젯 설정 저장
+- 백엔드 파일명: `GlobalController.java`
 
 **2. 위젯별 데이터 조회**
 - 각 위젯 컴포넌트에서 필요한 API를 호출하여 데이터를 조회합니다.
 - 주요 API 목록:
-  - `getDeviceFaultStatus`: 장비 현황 데이터 조회
-  - `WeeklyLog`: 주간 로그 발생 통계 조회
-  - `EtcLogsLastErrorList`: 장비 장애 로그 조회
-  - `LastFailDevice`: 최근 장애 목록 조회
-  - 각종 TopN API (CPU, Memory, Disk, Session 등)
+  - `/global/getDeviceFaultStatus`: 장비 현황 데이터 조회
+  - `/logs/weeklyLog`: 주간 로그 발생 통계 조회
+  - `/logs/etcLogs`: 장비 장애 로그 조회
+  - `/logs/lastFailDevice`: 최근 장애 목록 조회
+  - `/monitoring/topN`: 각종 TopN API (CPU, Memory, Disk, Session 등)
+  - 백엔드 파일명: `GlobalController.java`, `MonitoringController.java`, `LogsController.java`
 
 ---
 
@@ -380,6 +366,11 @@
 #### 3.6 환경 설정
 
 - `REACT_APP_BACKEND_TOBE_API_HOST` 환경 변수: WebSocket 연결에 사용되는 백엔드 API 호스트 주소
+
+#### 3.7 API 연동
+
+- API 엔드포인트: `/ws/monitoring`
+- 백엔드 파일명: `WebSocketController.java`
 
 ---
 
@@ -440,6 +431,12 @@
 #### 4.6 환경 설정
 
 - `REACT_APP_BACKEND_TOBE_API_HOST` 환경 변수: WebSocket 연결에 사용되는 백엔드 API 호스트 주소
+
+#### 4.7 API 연동
+
+- API 엔드포인트: `/ws/monitoring`
+- 백엔드 파일명: `WebSocketController.java`
+
 
 ---
 
@@ -567,8 +564,9 @@
 
 #### 6.5 API 연동
 
-- `getBwtConfigInfo`: BWT 설정 정보 조회
-- `setBwtConfigInfo`: BWT 설정 정보 업데이트
+- `/configuration/getBwtConfigInfo`: BWT 설정 정보 조회
+- `/configuration/setBwtConfigInfo`: BWT 설정 정보 업데이트
+- 백엔드 파일 : `ConfigurationController.java`
 
 #### 6.6 주요 상태 관리
 
@@ -639,7 +637,8 @@ interface ARPEntry {
 
 #### 7.5 API 연동
 
-- `sendUTMIPRuleArp`: ARP 테이블 조회 API
+- `/policies_main/send_UTMIPRuleArp`: ARP 테이블 조회 API
+- 백엔드 파일명: `PoliciesMainController.java`
 
 **1. 요청 타입**
 
@@ -724,7 +723,8 @@ const columns: ColumnDef<ARPEntry>[] = [
 
 #### 8.4 API 연동
 
-- `SendNonUTMIPPolicy`: 미사용 정책 조회 API
+- `/policies_main/send_NonUTMIPRule`: 미사용 정책 조회 API
+- 백엔드 파일명: `PoliciesMainController.java`
 
 **1. 요청 타입**
 
@@ -772,7 +772,9 @@ interface SendNonUTMIPPolicyRequest {
 
 #### 9.4 API 연동
 
-- `getInterfaceConfig`: 인터페이스 설정 정보 조회
+- `/configuration/getInterfaceConfig`: 인터페이스 설정 정보 조회
+- `/configuration/setInterfaceConfig`: 인터페이스 설정 정보 업데이트
+- 백엔드 파일명: `ConfigurationController.java`
 
 #### 9.5 EIX와 인터페이스 관련 주요 설정
 
@@ -852,11 +854,12 @@ interface SendNonUTMIPPolicyRequest {
 
 #### 10.6 API 연동
 
-- `getValidInformationStr`: 알람 예외 시간 설정 정보 조회
-- `UpdateValidInformation`: 알람 예외 시간 설정 정보 업데이트
-- `setAlarmExceptTime`: 알람 예외 시간 설정 적용
-- `getDeviceInfo`: 디바이스 정보 조회
-- `getDeviceGroupInfo`: 디바이스 그룹 정보 조회
+- `/system/getValidInformationStr`: 알람 예외 시간 설정 정보 조회
+- `/system/updateValidInformation`: 알람 예외 시간 설정 정보 업데이트
+- `/configuration/setAlarmExceptTime`: 알람 예외 시간 설정 적용
+- `/devices/getDeviceInfo`: 디바이스 정보 조회
+- `/devices/getDeviceGroupInfo`: 디바이스 그룹 정보 조회
+- 백엔드 파일명: `SystemController.java`, `ConfigurationController.java`, `DevicesController.java`
 
 #### 10.7 주요 상태 관리
 
@@ -936,8 +939,9 @@ interface SendNonUTMIPPolicyRequest {
 
 #### 11.6 API 연동
 
-- `getEventClassification`: 이벤트 등급 목록 조회
-- `setEventClassification`: 이벤트 등급 설정 업데이트
+- `/configuration/getEventClassification`: 이벤트 등급 목록 조회
+- `/configuration/setEventClassification`: 이벤트 등급 설정 업데이트
+- 백엔드 파일명: `ConfigurationController.java`
 
 #### 11.7 주요 상태 관리
 
